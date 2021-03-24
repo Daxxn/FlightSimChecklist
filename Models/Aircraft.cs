@@ -1,6 +1,7 @@
 ﻿using MVVMLibrary;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,9 @@ namespace ChecklistApp.Models
       private string _model;
       private string _subModel;
       private AircraftType _type;
+      public int Version { get; set; }
+
+      private ObservableCollection<Checklist> _checklists;
       #endregion
 
       #region - Constructors
@@ -30,7 +34,14 @@ namespace ChecklistApp.Models
       #endregion
 
       #region - Methods
-
+      public override string ToString()
+      {
+         return $"{Make} {Model} {SubModel} ({Type})";
+      }
+      public string ChecklistString()
+      {
+         return $"{Make}{Model}{SubModel}{(int)Type}{Version}";
+      }
       #endregion
 
       #region - Full Properties
@@ -70,6 +81,16 @@ namespace ChecklistApp.Models
          set
          {
             _type = value;
+            OnPropertyChanged();
+         }
+      }
+
+      public ObservableCollection<Checklist> Checklists
+      {
+         get { return _checklists; }
+         set
+         {
+            _checklists = value;
             OnPropertyChanged();
          }
       }

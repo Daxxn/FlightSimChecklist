@@ -14,10 +14,12 @@
         </Grid.RowDefinitions>
 
         <Menu>
-            <MenuItem Header="File"/>
+            <MenuItem Header="File">
+                <MenuItem Header="Save All" Command="{Binding Path=SaveAllCmd}"/>
+            </MenuItem>
         </Menu>
 
-        <TabControl>
+        <TabControl Grid.Row="1">
             <TabItem Header="Checklists">
                 <views:ChecklistView/>
             </TabItem>

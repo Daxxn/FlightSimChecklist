@@ -12,7 +12,6 @@ namespace ChecklistApp.Models
    {
       #region - Fields & Properties
       private string _name;
-      private Aircraft _aircraft;
       private ObservableCollection<string> _tags;
       private ObservableCollection<CheckItem> _items;
       #endregion
@@ -32,16 +31,6 @@ namespace ChecklistApp.Models
          set
          {
             _name = value;
-            OnPropertyChanged();
-         }
-      }
-
-      public Aircraft Aircraft
-      {
-         get { return _aircraft; }
-         set
-         {
-            _aircraft = value;
             OnPropertyChanged();
          }
       }

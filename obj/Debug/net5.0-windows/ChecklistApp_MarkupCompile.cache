@@ -1,5 +1,5 @@
 ﻿ChecklistApp
-1.0.0.0
+
 
 winexe
 C#
@@ -12,7 +12,7 @@ TRACE;DEBUG;NET;NET5_0;NETCOREAPP
 B:\Code\C#\Projects\MSFS\ChecklistApp\App.xaml
 4-74856803
 
-181731732601
+16-1595004452
 196-331698816
 MainWindow.xaml;Views\AircraftView.xaml;Views\ChecklistView.xaml;Views\SaveManager.xaml;
 
