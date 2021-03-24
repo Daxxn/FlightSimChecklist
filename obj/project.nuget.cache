@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "TQcpBxJkVpoKYWgrdp/+6y/QLYz5s2e6yL24EIswUjqeBGYUvaGzVgfUGhxIBp2j0he97hv9Vw+eZlC0zzvrXQ==",
+  "success": true,
+  "projectFilePath": "B:\\Code\\C#\\Projects\\MSFS\\ChecklistApp\\ChecklistApp.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Cody\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

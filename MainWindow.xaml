@@ -1,0 +1,32 @@
+﻿<Window x:Class="ChecklistApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ChecklistApp"
+        xmlns:views="clr-namespace:ChecklistApp.Views"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Menu>
+            <MenuItem Header="File"/>
+        </Menu>
+
+        <TabControl>
+            <TabItem Header="Checklists">
+                <views:ChecklistView/>
+            </TabItem>
+            <TabItem Header="Aircraft">
+                <views:AircraftView/>
+            </TabItem>
+            <TabItem Header="File Manager">
+                <views:SaveManager/>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
