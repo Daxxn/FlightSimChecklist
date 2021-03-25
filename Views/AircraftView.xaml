@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ChecklistApp.Views"
-             mc:Ignorable="d" 
+             xmlns:enums="clr-namespace:ChecklistApp.Models.Enums"
+             mc:Ignorable="d"  Background="{StaticResource MainBG}"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -21,20 +22,103 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0">
-                    <Button Grid.Row="0" Command="{Binding Path=OpenAircraftDataCmd}">Open Aircraft Data File</Button>
-                    <Button Grid.Row="1" Command="{Binding Path=SelectAircraftCmd}">Select Aircraft</Button>
-                </StackPanel>
+                <Border Grid.Row="0" Padding="0,10,0,10">
+                    <StackPanel>
+                        <Button Command="{Binding Path=OpenAircraftDataCmd}">Open Aircraft Data File</Button>
+                        <Button Command="{Binding Path=SelectAircraftCmd}">Select Aircraft</Button>
+                    </StackPanel>
+                </Border>
 
-                <StackPanel Grid.Row="1">
-                    <Button Grid.Row="2" Command="{Binding Path=CreateAircraftCmd}">New Aircraft</Button>
-                    <Button Grid.Row="3" Command="{Binding Path=CreateChecklistCmd}">New Checklist</Button>
-                </StackPanel>
+                <Border Grid.Row="1" Padding="0,10,0,10">
+                    <StackPanel>
+                        <Button Command="{Binding Path=CreateAircraftCmd}">New Aircraft</Button>
+                        <Button Command="{Binding Path=CreateChecklistCmd}">New Checklist</Button>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Row="2" Padding="0,10,0,10">
+                    <StackPanel>
+                        <Button Command="{Binding Path=SaveAllAircraftCmd}">Save All Aircraft</Button>
+                        <Button Command="{Binding Path=SaveAllChecklistsCmd}">
+                            <Button.ToolTip>
+                                <TextBlock>Not recommended. Best to save all aircraft.</TextBlock>
+                            </Button.ToolTip>
+                            Save All Checklists
+                        </Button>
+                        <Button Command="{Binding Path=SaveSelectedAircraftCmd}">Save Selected</Button>
+                    </StackPanel>
+                </Border>
             </Grid>
         </Border>
 
         <Border Grid.Column="1">
-            <ListView ItemsSource="{Binding Path=AircraftData}" SelectedItem="{Binding Path=SelectedAircraft}"/>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <ListView
+                    Grid.Row="0"
+                    ItemsSource="{Binding Path=AircraftData}"
+                    SelectedItem="{Binding Path=SelectedAircraft}"
+                >
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition SharedSizeGroup="a"/>
+                                    <ColumnDefinition SharedSizeGroup="b"/>
+                                    <ColumnDefinition SharedSizeGroup="c"/>
+                                    <ColumnDefinition SharedSizeGroup="d"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0" Text="{Binding Path=Make}" Style="{StaticResource WhiteText}"/>
+                                <TextBlock Grid.Column="1" Text="{Binding Path=Model}" Style="{StaticResource WhiteText}"/>
+                                <TextBlock Grid.Column="2" Text="{Binding Path=SubModel}" Style="{StaticResource WhiteText}"/>
+                                <TextBlock Grid.Column="3" Text="{Binding Path=Type, StringFormat=({0})}" Style="{StaticResource WhiteText}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <Expander Grid.Row="1" Style="{StaticResource ExpanderBase}">
+                    <Expander.Header>
+                        <TextBlock Foreground="{StaticResource MainText}">Edit</TextBlock>
+                    </Expander.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Column="0" Grid.Row="0" Style="{StaticResource WhiteText}">Make</TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Path=SelectedAircraft.Make, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <TextBlock Grid.Column="0" Grid.Row="1" Style="{StaticResource WhiteText}">Model</TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Path=SelectedAircraft.Model}"/>
+
+                        <TextBlock Grid.Column="0" Grid.Row="2" Style="{StaticResource WhiteText}">Sub-Model</TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Path=SelectedAircraft.SubModel}"/>
+
+                        <TextBlock Grid.Column="0" Grid.Row="3" Style="{StaticResource WhiteText}">Type</TextBlock>
+                        <ComboBox
+                            Grid.Column="1"
+                            Grid.Row="3"
+                            ItemsSource="{Binding Source={local:EnumMarkup {x:Type enums:AircraftType}}}"
+                            SelectedItem="{Binding Path=SelectedAircraft.Type}"
+                            Style="{StaticResource ComboBase}"
+                        />
+                    </Grid>
+                </Expander>
+            </Grid>
         </Border>
     </Grid>
 </UserControl>

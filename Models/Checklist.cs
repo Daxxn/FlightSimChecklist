@@ -13,15 +13,25 @@ namespace ChecklistApp.Models
       #region - Fields & Properties
       private string _name;
       private ObservableCollection<string> _tags;
-      private ObservableCollection<CheckItem> _items;
+      private ObservableCollection<CheckItem> _items = new ObservableCollection<CheckItem>();
       #endregion
 
       #region - Constructors
-      public Checklist() { }
+      public Checklist()
+      {
+         Name = "New Checklist";
+      }
+      public Checklist(string name)
+      {
+         Name = name;
+      }
       #endregion
 
       #region - Methods
-
+      public void OrganizeItems()
+      {
+         BubbleSort.SortProperty(Items, (I) => I.Index);
+      }
       #endregion
 
       #region - Full Properties

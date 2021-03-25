@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ChecklistApp.Views"
-             mc:Ignorable="d" 
+             xmlns:enums="clr-namespace:ChecklistApp.Models.Enums"
+             mc:Ignorable="d" Background="{StaticResource MainBG}"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -15,20 +16,17 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Column="0">
+        <Border Style="{StaticResource ControlsBorder}">
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <Border Grid.Row="3">
+                <TextBlock Margin="10,10" Text="{Binding Path=CurrentAircraft}" Style="{StaticResource WhiteText}"/>
+
+                <Border Style="{StaticResource AllChecklistsBorder}">
                     <ListView
                         x:Name="AllChecklistsView"
                         ItemsSource="{Binding Path=CurrentAircraft.Checklists}"
@@ -36,48 +34,73 @@
                     >
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <Border>
+                                <Border Padding="1,2,20,2">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
 
-                                        <TextBlock Text="{Binding Path=Name}"/>
-                                        <ListView Grid.Row="1" ItemsSource="{Binding Path=Tags}">
-                                            <ListView.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <WrapPanel Orientation="Horizontal" MaxWidth="200"/>
-                                                </ItemsPanelTemplate>
-                                            </ListView.ItemsPanel>
-                                            <ListView.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Border>
-                                                        <TextBlock Text="{Binding}"/>
-                                                    </Border>
-                                                </DataTemplate>
-                                            </ListView.ItemTemplate>
-                                        </ListView>
+                                        <TextBox Text="{Binding Path=Name}"/>
+                                        <Grid Grid.Row="1">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ListView Grid.Column="0" ItemsSource="{Binding Path=Tags}">
+                                                <ListView.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <WrapPanel Orientation="Horizontal" Width="200" MaxWidth="300"/>
+                                                    </ItemsPanelTemplate>
+                                                </ListView.ItemsPanel>
+                                                <ListView.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border Style="{StaticResource TagItemBorder}">
+                                                            <TextBlock Text="{Binding}"/>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ListView.ItemTemplate>
+                                            </ListView>
+                                            <Button x:Name="NewTagButton" Grid.Column="1" MinHeight="20" MaxHeight="30" MinWidth="20">+</Button>
+                                        </Grid>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
                 </Border>
+
+                <Button
+                    Grid.Row="2"
+                    Command="{Binding Path=NewChecklistCmd}"
+                >
+                    New Checklist
+                </Button>
             </Grid>
         </Border>
 
-        <Border Grid.Column="1">
+        <Border Style="{StaticResource CurrentChecklistBorder}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="{Binding Path=SelectedChecklist.Name}" FontSize="20"/>
+                <TextBlock
+                    Grid.Row="0"
+                    Text="{Binding Path=SelectedChecklist.Name}"
+                    FontSize="20"
+                    Style="{StaticResource WhiteText}"
+                />
 
-                <ListView Grid.Row="2" Grid.IsSharedSizeScope="True" ItemsSource="{Binding Path=SelectedChecklist.Items}">
+                <ListView
+                    Grid.Row="2"
+                    Grid.IsSharedSizeScope="True"
+                    ItemsSource="{Binding Path=SelectedChecklist.Items}"
+                    SelectedItem="{Binding Path=SelectedItem}"
+                >
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <Border>
@@ -93,15 +116,73 @@
 
                                     <CheckBox IsChecked="{Binding Path=Checked}"/>
                                     <TextBlock Grid.Column="1" Padding="10,0" Text="{Binding Path=Index}"/>
-                                    <TextBlock Grid.Column="1" Padding="10,0" Text="{Binding Path=Action}"/>
-                                    <TextBlock Grid.Column="2" Padding="10,0" Text="{Binding Path=State}"/>
-                                    <TextBlock Grid.Column="3" Text="{Binding Path=Description}"/>
-                                    <TextBlock Grid.Column="4" Padding="10,0,0,0" Text="{Binding Path=ExtraInfo}"/>
+                                    <TextBlock Grid.Column="2" Padding="10,0" Text="{Binding Path=Action}"/>
+                                    <TextBlock Grid.Column="3" Padding="10,0" Text="{Binding Path=State}"/>
+                                    <TextBlock Grid.Column="4" Text="{Binding Path=Description}"/>
+                                    <TextBlock Grid.Column="5" Padding="10,0,0,0" Text="{Binding Path=ExtraInfo}"/>
                                 </Grid>
                             </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
+
+                <Grid Grid.Row="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Expander Grid.Column="0" Style="{StaticResource ExpanderBase}">
+                        <Expander.Header>
+                            <TextBlock Foreground="{StaticResource MainText}">Edit</TextBlock>
+                        </Expander.Header>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*" MaxWidth="100"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*" MaxWidth="100"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0">Action</TextBlock>
+                            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=SelectedItem.Action}"/>
+                            <TextBlock Grid.Row="0" Grid.Column="2">State</TextBlock>
+                            <ComboBox
+                                Grid.Row="0"
+                                Grid.Column="3"
+                                SelectedItem="{Binding Path=SelectedItem.State}"
+                                ItemsSource="{Binding Source={local:EnumMarkup {x:Type enums:State}}}"
+                                Style="{StaticResource ComboBase}"
+                            />
+                            <TextBlock Grid.Row="1" Grid.Column="0">Desc</TextBlock>
+                            <TextBox
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Grid.ColumnSpan="3"
+                                Text="{Binding Path=SelectedItem.Description}"
+                            />
+                            <TextBlock Grid.Row="2" Grid.Column="0">Extra Info</TextBlock>
+                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Path=SelectedItem.ExtraInfo}"/>
+                            <TextBlock Grid.Row="2" Grid.Column="2">Index</TextBlock>
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="3"
+                                TextChanged="TextBox_TextChanged"
+                                Text="{Binding Path=SelectedItem.Index, UpdateSourceTrigger=PropertyChanged}"
+                            />
+                        </Grid>
+                    </Expander>
+
+                    <Button
+                        Grid.Column="1"
+                        Command="{Binding Path=NewCheckItemCmd}"
+                        Style="{StaticResource AddButton}"
+                    />
+                </Grid>
             </Grid>
         </Border>
     </Grid>

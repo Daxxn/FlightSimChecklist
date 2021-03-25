@@ -26,9 +26,15 @@ namespace ChecklistApp.ViewModels
 
       public Command OpenAircraftDataCmd { get; init; }
       public Command OpenAircraftChecklistCmd { get; init; }
+
       public Command SelectAircraftCmd { get; init; }
+
       public Command CreateAircraftCmd { get; init; }
       public Command CreateChecklistCmd { get; init; }
+
+      public Command SaveAllAircraftCmd { get; init; }
+      public Command SaveSelectedAircraftCmd { get; init; }
+      public Command SaveAllChecklistsCmd { get; init; }
       #endregion
 
       #region - Constructors
@@ -39,10 +45,20 @@ namespace ChecklistApp.ViewModels
          SelectAircraftCmd = new Command((o) => LoadNewAircraft());
          CreateAircraftCmd = new Command((o) => CreateAircraft());
          CreateChecklistCmd = new Command((o) => CreateChecklist());
+         SaveAllAircraftCmd = new Command((o) => SaveAllAircraft());
+         SaveSelectedAircraftCmd = new Command((o) => SaveSelectedAircraft());
+         SaveAllChecklistsCmd = new Command((o) => SaveAllChecklists());
+
+         MainViewModel.SaveAllEvent += MainViewModel_SaveAllEvent;
       }
       #endregion
 
       #region - Methods
+      private void MainViewModel_SaveAllEvent(object sender, EventArgs e)
+      {
+         SaveAllAircraft();
+      }
+
       public void LoadAircraftData()
       {
          List<FileDialogCustomPlace> customPlaces = new List<FileDialogCustomPlace>
@@ -62,11 +78,12 @@ namespace ChecklistApp.ViewModels
             {
                AircraftDataSavePath = dialog.FileName;
 
-               var aircraftData = JsonReader.OpenJsonFile<AircraftDataModel>(AircraftDataSavePath);
+               var aircraftData = JsonReader.OpenJsonFile<AircraftDataModel>(AircraftDataSavePath, false);
 
                if (aircraftData.AircraftData.Count() > 0)
                {
                   AircraftData = new ObservableCollection<Aircraft>(aircraftData.AircraftData);
+                  ChecklistDir = aircraftData.ChecklistDir;
                   LoadAircraftChecklistFile();
                }
                else
@@ -89,12 +106,12 @@ namespace ChecklistApp.ViewModels
             {
                if (AircraftData.Count > 0)
                {
-                  AircraftChecklists = JsonReader.OpenJsonFile<ChecklistDataModel>(Path.Combine(ChecklistDir, AircraftData[0].ChecklistString() + ".json")).Checklists;
+                  AircraftChecklists = JsonReader.OpenJsonFile<List<Checklist>>(Path.Combine(ChecklistDir, AircraftData[0].ToChecklistString()));
                }
             }
             else
             {
-               AircraftChecklists = JsonReader.OpenJsonFile<ChecklistDataModel>(Path.Combine(ChecklistDir, SelectedAircraft.ChecklistString() + ".json")).Checklists;
+               AircraftChecklists = JsonReader.OpenJsonFile<List<Checklist>>(Path.Combine(ChecklistDir, SelectedAircraft.ToChecklistString()));
             }
          }
          catch (Exception e)
@@ -105,6 +122,8 @@ namespace ChecklistApp.ViewModels
 
       public void LoadNewAircraft()
       {
+         if (AircraftData is null) return;
+
          if (AircraftChecklists != null)
          {
             SelectedAircraft.Checklists = new ObservableCollection<Checklist>(AircraftChecklists);
@@ -114,9 +133,16 @@ namespace ChecklistApp.ViewModels
 
       public void CreateAircraft()
       {
-         var newAircraft = new Aircraft();
-         AircraftData.Add(newAircraft);
-         SelectedAircraft = newAircraft;
+         if (AircraftData != null)
+         {
+            var newAircraft = new Aircraft();
+            AircraftData.Add(newAircraft);
+            SelectedAircraft = newAircraft;
+         }
+         else
+         {
+            MessageBox.Show("No aircraft data file selected. Open an aircraft file.", "Hold ON!!");
+         }
       }
 
       public void CreateChecklist()
@@ -124,6 +150,79 @@ namespace ChecklistApp.ViewModels
          if (SelectedAircraft is null) return;
 
          SelectedAircraft.Checklists.Add(new Checklist());
+      }
+
+      public void SaveAllAircraft()
+      {
+         // Saves aircraft checklists first.
+         SaveAllChecklists();
+
+         try
+         {
+            JsonReader.SaveJsonFile(AircraftDataSavePath, AircraftData);
+         }
+         catch (Exception e)
+         {
+            MessageBox.Show($"Problems saving all aircraft. {e.Message}", "Hmm..");
+         }
+      }
+
+      public void SaveAllChecklists()
+      {
+         try
+         {
+            var errors = new List<Exception>();
+            foreach (var aircraft in AircraftData)
+            {
+               try
+               {
+                  SaveAircraft(aircraft);
+               }
+               catch (Exception e)
+               {
+                  errors.Add(e);
+               }
+            }
+
+            if (errors.Count > 0)
+            {
+               StringBuilder bd = new StringBuilder("Errors during save.\n");
+               foreach (var err in errors)
+               {
+                  bd.AppendLine($"\t{err.Message}");
+               }
+               MessageBox.Show(bd.ToString(), "Hmm..");
+            }
+         }
+         catch (Exception e)
+         {
+            MessageBox.Show($"Problems saving all checklists. {e.Message}", "Hmm..");
+         }
+      }
+
+      public void SaveSelectedAircraft()
+      {
+         try
+         {
+            SaveAircraft(SelectedAircraft);
+         }
+         catch (Exception e)
+         {
+            MessageBox.Show($"Couldnt save aircraft. {e.Message}", "Hmm..");
+         }
+      }
+
+      private void SaveAircraft(Aircraft aircraft)
+      {
+         if (String.IsNullOrEmpty(aircraft.SavePath))
+         {
+            aircraft.SavePath = Path.Combine(ChecklistDir, aircraft.ToChecklistString());
+            JsonReader.SaveJsonFile(aircraft.SavePath, aircraft.Checklists, true);
+         }
+         else
+         {
+            JsonReader.SaveJsonFile(aircraft.SavePath, aircraft.Checklists);
+         }
       }
       #endregion
 
@@ -155,6 +254,7 @@ namespace ChecklistApp.ViewModels
          {
             _aircraftData = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(SelectedAircraft));
          }
       }
 

@@ -21,10 +21,17 @@ namespace ChecklistApp.Views
    /// </summary>
    public partial class ChecklistView : UserControl
    {
+      private ChecklistViewModel VM { get; init; }
       public ChecklistView()
       {
-         DataContext = new ChecklistViewModel();
+         VM = new ChecklistViewModel();
+         DataContext = VM;
          InitializeComponent();
+      }
+
+      private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+      {
+         VM.SelectedChecklist?.OrganizeItems();
       }
    }
 }

@@ -15,84 +15,18 @@ namespace ChecklistApp.ViewModels
       #region - Fields & Properties
       private Aircraft _currentAircraft;
       private Checklist _selectedChecklist;
+      private CheckItem _selectedItem;
+
+      public Command NewChecklistCmd { get; init; }
+      public Command NewCheckItemCmd { get; init; }
       #endregion
 
       #region - Constructors
       public ChecklistViewModel()
       {
          AircraftViewModel.LoadAircraftEvent += LoadNewAircraft;
-         // Just for testing.
-         CurrentAircraft = new Aircraft
-         {
-            Make = "TBM",
-            Model = "930",
-            Type = AircraftType.TurboProp,
-            Version = 0,
-            Checklists = new ObservableCollection<Checklist>
-            {
-               new Checklist
-               {
-                  Name = "Test",
-                  Tags = new ObservableCollection<string>
-                  {
-                     "Pre-Flight",
-                     "Basic",
-                     "Testing-ONLY"
-                  },
-                  Items = new ObservableCollection<CheckItem>
-                  {
-                     new CheckItem
-                     {
-                        Action = "Master Switch",
-                        State = State.ON,
-                        Description = "Set master switch for main electrical system",
-                        ExtraInfo = "",
-                        Index = 1,
-                     },
-                     new CheckItem
-                     {
-                        Action = "Fuel Boost Pump",
-                        State = State.ON,
-                        Description = "Turn on boost pumps",
-                        ExtraInfo = "Needs to be on during startup.",
-                        Index = 2,
-                     },
-                     new CheckItem
-                     {
-                        Action = "Flaps",
-                        State = State.TAKEOFF,
-                        Description = "Set flaps for takeoff.",
-                        ExtraInfo = "",
-                        Index = 3,
-                     },
-                  }
-               },
-               new Checklist
-               {
-                  Name = "Test 2",
-                  Tags = new ObservableCollection<string>{"Testing-ONLY" },
-                  Items = new ObservableCollection<CheckItem>
-                  {
-                     new CheckItem
-                     {
-                        Action = "Master Switch",
-                        State = State.ON,
-                        Description = "Set master switch for main electrical system",
-                        ExtraInfo = "",
-                        Index = 1,
-                     },
-                     new CheckItem
-                     {
-                        Action = "Flaps",
-                        State = State.TAKEOFF,
-                        Description = "Set flaps for takeoff.",
-                        ExtraInfo = "",
-                        Index = 2,
-                     },
-                  }
-               }
-            }
-         };
+         NewChecklistCmd = new Command((o) => NewChecklist());
+         NewCheckItemCmd = new Command((o) => NewCheckItem());
       }
       #endregion
 
@@ -104,6 +38,30 @@ namespace ChecklistApp.ViewModels
          {
             SelectedChecklist = CurrentAircraft.Checklists.Count > 0 ? CurrentAircraft.Checklists[0] : null;
          }
+      }
+
+      public void NewChecklist()
+      {
+         if (CurrentAircraft is null) return;
+
+         CurrentAircraft.Checklists.Add(new Checklist());
+      }
+
+      public void NewCheckItem()
+      {
+         if (SelectedChecklist is null) return;
+
+         CheckItem newItem = new CheckItem();
+         SelectedItem = newItem;
+         if (SelectedChecklist.Items is null)
+         {
+            SelectedChecklist.Items = new ObservableCollection<CheckItem>();
+         }
+         else
+         {
+            SelectedItem.Index = SelectedChecklist.Items.Count;
+         }
+         SelectedChecklist.Items.Add(newItem);
       }
       #endregion
 
@@ -124,6 +82,16 @@ namespace ChecklistApp.ViewModels
          set
          {
             _selectedChecklist = value;
+            OnPropertyChanged();
+         }
+      }
+
+      public CheckItem SelectedItem
+      {
+         get { return _selectedItem; }
+         set
+         {
+            _selectedItem = value;
             OnPropertyChanged();
          }
       }

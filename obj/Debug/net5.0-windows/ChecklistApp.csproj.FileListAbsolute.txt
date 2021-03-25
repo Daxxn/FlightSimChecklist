@@ -33,3 +33,5 @@ B:\Code\C#\Projects\MSFS\ChecklistApp\obj\Debug\net5.0-windows\ChecklistApp.dll
 B:\Code\C#\Projects\MSFS\ChecklistApp\obj\Debug\net5.0-windows\ref\ChecklistApp.dll
 B:\Code\C#\Projects\MSFS\ChecklistApp\obj\Debug\net5.0-windows\ChecklistApp.pdb
 B:\Code\C#\Projects\MSFS\ChecklistApp\obj\Debug\net5.0-windows\ChecklistApp.genruntimeconfig.cache
+B:\Code\C#\Projects\MSFS\ChecklistApp\obj\Debug\net5.0-windows\Styles.baml
+B:\Code\C#\Projects\MSFS\ChecklistApp\obj\Debug\net5.0-windows\App.baml

@@ -1,4 +1,5 @@
-﻿using MVVMLibrary;
+﻿using ChecklistApp.Models.Enums;
+using MVVMLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,18 +8,6 @@ using System.Threading.Tasks;
 
 namespace ChecklistApp.Models
 {
-   public enum State
-   {
-      ON,
-      OFF,
-      SET,
-      CHECKED,
-      READY,
-      UP,
-      DOWN,
-      TAKEOFF,
-      LANDING
-   };
 
    public class CheckItem : Model
    {
@@ -33,7 +22,10 @@ namespace ChecklistApp.Models
       #endregion
 
       #region - Constructors
-      public CheckItem() { }
+      public CheckItem()
+      {
+         Action = "NEW ITEM";
+      }
       #endregion
 
       #region - Methods
@@ -87,9 +79,9 @@ namespace ChecklistApp.Models
          {
             _index = value;
             OnPropertyChanged();
+            //OnPropertyChanged(nameof(IndexDisplay));
          }
       }
-
 
       public bool Checked
       {

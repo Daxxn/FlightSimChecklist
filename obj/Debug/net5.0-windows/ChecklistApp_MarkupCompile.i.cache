@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET5_0;NETCOREAPP
 B:\Code\C#\Projects\MSFS\ChecklistApp\App.xaml
-4-74856803
+5-694731472
 
-181731732601
+22-945998920
 196-331698816
-MainWindow.xaml;Views\AircraftView.xaml;Views\ChecklistView.xaml;Views\SaveManager.xaml;
+MainWindow.xaml;Styles.xaml;Views\AircraftView.xaml;Views\ChecklistView.xaml;Views\SaveManager.xaml;
 
-False
+True
 

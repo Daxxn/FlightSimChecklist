@@ -1,4 +1,5 @@
-﻿using MVVMLibrary;
+﻿using ChecklistApp.Models.Enums;
+using MVVMLibrary;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,15 +9,6 @@ using System.Threading.Tasks;
 
 namespace ChecklistApp.Models
 {
-   public enum AircraftType
-   {
-      Other,
-      Prop,
-      TurboProp,
-      Jet,
-      Heli
-   };
-
    public class Aircraft : Model
    {
       #region - Fields & Properties
@@ -25,12 +17,17 @@ namespace ChecklistApp.Models
       private string _subModel;
       private AircraftType _type;
       public int Version { get; set; }
+      public string SavePath { get; set; }
 
       private ObservableCollection<Checklist> _checklists;
+      private ObservableCollection<string> _checklistStates;
       #endregion
 
       #region - Constructors
-      public Aircraft() { }
+      public Aircraft()
+      {
+         Checklists = new ObservableCollection<Checklist>();
+      }
       #endregion
 
       #region - Methods
@@ -38,9 +35,9 @@ namespace ChecklistApp.Models
       {
          return $"{Make} {Model} {SubModel} ({Type})";
       }
-      public string ChecklistString()
+      public string ToChecklistString()
       {
-         return $"{Make}{Model}{SubModel}{(int)Type}{Version}";
+         return $"{Make}{Model}{SubModel}_{(int)Type}_{Version}.json";
       }
       #endregion
 
@@ -91,6 +88,16 @@ namespace ChecklistApp.Models
          set
          {
             _checklists = value;
+            OnPropertyChanged();
+         }
+      }
+
+      public ObservableCollection<string> ChecklistStates
+      {
+         get { return _checklistStates; }
+         set
+         {
+            _checklistStates = value;
             OnPropertyChanged();
          }
       }
