@@ -13,7 +13,10 @@
     <Compile Update="Views\ChecklistView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\SaveManager.xaml.cs">
+    <Compile Update="Views\ScratchpadView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\TagManagerView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -30,7 +33,10 @@
     <Page Update="Views\ChecklistView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\SaveManager.xaml">
+    <Page Update="Views\ScratchpadView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\TagManagerView.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

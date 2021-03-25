@@ -13,7 +13,7 @@ namespace ChecklistApp.Models
       #region - Fields & Properties
       private string _name;
       private ObservableCollection<string> _tags;
-      private ObservableCollection<CheckItem> _items = new ObservableCollection<CheckItem>();
+      private ObservableCollection<CheckItem> _items = new();
       #endregion
 
       #region - Constructors

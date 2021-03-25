@@ -61,12 +61,12 @@ namespace ChecklistApp.ViewModels
 
       public void LoadAircraftData()
       {
-         List<FileDialogCustomPlace> customPlaces = new List<FileDialogCustomPlace>
+         List<FileDialogCustomPlace> customPlaces = new()
          {
             new FileDialogCustomPlace(@"D:\FlightSimData\CustomChecklists")
          };
 
-         OpenFileDialog dialog = new OpenFileDialog
+         OpenFileDialog dialog = new()
          {
             CustomPlaces = customPlaces,
             Title = "Open Aircraft Data File"
@@ -80,7 +80,7 @@ namespace ChecklistApp.ViewModels
 
                var aircraftData = JsonReader.OpenJsonFile<AircraftDataModel>(AircraftDataSavePath, false);
 
-               if (aircraftData.AircraftData.Count() > 0)
+               if (aircraftData.AircraftData.Any())
                {
                   AircraftData = new ObservableCollection<Aircraft>(aircraftData.AircraftData);
                   ChecklistDir = aircraftData.ChecklistDir;
@@ -186,7 +186,7 @@ namespace ChecklistApp.ViewModels
 
             if (errors.Count > 0)
             {
-               StringBuilder bd = new StringBuilder("Errors during save.\n");
+               StringBuilder bd = new("Errors during save.\n");
                foreach (var err in errors)
                {
                   bd.AppendLine($"\t{err.Message}");

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChecklistApp.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,12 +17,13 @@ using System.Windows.Shapes;
 namespace ChecklistApp.Views
 {
    /// <summary>
-   /// Interaction logic for SaveManager.xaml
+   /// Interaction logic for ScratchpadView.xaml
    /// </summary>
-   public partial class SaveManager : UserControl
+   public partial class ScratchpadView : UserControl
    {
-      public SaveManager()
+      public ScratchpadView()
       {
+         DataContext = new ScratchpadViewModel();
          InitializeComponent();
       }
    }

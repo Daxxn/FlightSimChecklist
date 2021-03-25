@@ -26,8 +26,11 @@
             <TabItem Header="Aircraft">
                 <views:AircraftView/>
             </TabItem>
-            <TabItem Header="File Manager">
-                <views:SaveManager/>
+            <TabItem Header="Tag Manager">
+                <views:TagManagerView/>
+            </TabItem>
+            <TabItem Header="Scratch Pad">
+                <views:ScratchpadView/>
             </TabItem>
         </TabControl>
     </Grid>

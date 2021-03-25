@@ -51,7 +51,7 @@ namespace ChecklistApp.ViewModels
       {
          if (SelectedChecklist is null) return;
 
-         CheckItem newItem = new CheckItem();
+         CheckItem newItem = new();
          SelectedItem = newItem;
          if (SelectedChecklist.Items is null)
          {

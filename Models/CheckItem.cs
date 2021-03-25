@@ -13,7 +13,6 @@ namespace ChecklistApp.Models
    {
       #region - Fields & Properties
       private string _action;
-      private State _state;
       private string _desc;
       private string _info;
       private int _index;
@@ -39,15 +38,6 @@ namespace ChecklistApp.Models
          set
          {
             _action = value;
-            OnPropertyChanged();
-         }
-      }
-      public State State
-      {
-         get { return _state; }
-         set
-         {
-            _state = value;
             OnPropertyChanged();
          }
       }

@@ -117,7 +117,6 @@
                                     <CheckBox IsChecked="{Binding Path=Checked}"/>
                                     <TextBlock Grid.Column="1" Padding="10,0" Text="{Binding Path=Index}"/>
                                     <TextBlock Grid.Column="2" Padding="10,0" Text="{Binding Path=Action}"/>
-                                    <TextBlock Grid.Column="3" Padding="10,0" Text="{Binding Path=State}"/>
                                     <TextBlock Grid.Column="4" Text="{Binding Path=Description}"/>
                                     <TextBlock Grid.Column="5" Padding="10,0,0,0" Text="{Binding Path=ExtraInfo}"/>
                                 </Grid>
@@ -138,7 +137,7 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*" MaxWidth="100"/>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*" MaxWidth="100"/>
                             </Grid.ColumnDefinitions>
@@ -148,37 +147,49 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0" Grid.Column="0">Action</TextBlock>
-                            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=SelectedItem.Action}"/>
-                            <TextBlock Grid.Row="0" Grid.Column="2">State</TextBlock>
-                            <ComboBox
+                            <TextBlock Grid.Row="0" Grid.Column="0">Index</TextBlock>
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                MaxLength="4"
+                                MinWidth="40"
+                                MaxWidth="100"
+                                TextChanged="TextBox_TextChanged"
+                                Margin="0,0,10,0"
+                                Text="{Binding Path=SelectedItem.Index, UpdateSourceTrigger=PropertyChanged}"
+                            />
+
+                            <TextBlock Grid.Row="0" Grid.Column="2">Action</TextBlock>
+                            <TextBox
                                 Grid.Row="0"
                                 Grid.Column="3"
-                                SelectedItem="{Binding Path=SelectedItem.State}"
-                                ItemsSource="{Binding Source={local:EnumMarkup {x:Type enums:State}}}"
-                                Style="{StaticResource ComboBase}"
-                            />
+                                Margin="0,1,0,1"
+                                Text="{Binding Path=SelectedItem.Action}"
+                             />
+                            
                             <TextBlock Grid.Row="1" Grid.Column="0">Desc</TextBlock>
                             <TextBox
+                                Margin="0,1,0,1"
                                 Grid.Row="1"
                                 Grid.Column="1"
                                 Grid.ColumnSpan="3"
                                 Text="{Binding Path=SelectedItem.Description}"
                             />
-                            <TextBlock Grid.Row="2" Grid.Column="0">Extra Info</TextBlock>
-                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Path=SelectedItem.ExtraInfo}"/>
-                            <TextBlock Grid.Row="2" Grid.Column="2">Index</TextBlock>
+                            
+                            <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,1,10,1">Extra Info</TextBlock>
                             <TextBox
+                                Margin="0,1,0,1"
                                 Grid.Row="2"
-                                Grid.Column="3"
-                                TextChanged="TextBox_TextChanged"
-                                Text="{Binding Path=SelectedItem.Index, UpdateSourceTrigger=PropertyChanged}"
+                                Grid.Column="1"
+                                Grid.ColumnSpan="3"
+                                Text="{Binding Path=SelectedItem.ExtraInfo}"
                             />
                         </Grid>
                     </Expander>
 
                     <Button
                         Grid.Column="1"
+                        MinWidth="30"
                         Command="{Binding Path=NewCheckItemCmd}"
                         Style="{StaticResource AddButton}"
                     />
