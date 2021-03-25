@@ -53,7 +53,7 @@ namespace ChecklistApp.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/ChecklistApp;component/views/savemanager.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/ChecklistApp;V1.0.0.0;component/views/savemanager.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Views\SaveManager.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
