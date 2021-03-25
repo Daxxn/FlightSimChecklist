@@ -77,4 +77,10 @@
         <Setter Property="FontSize" Value="20"/>
         <Setter Property="FontWeight" Value="DemiBold"/>
     </Style>
+    <Style TargetType="TextBox" x:Key="TagText">
+        <Setter Property="AcceptsReturn" Value="False"/>
+        <Setter Property="AcceptsTab" Value="False"/>
+        <Setter Property="Background" Value="{StaticResource TagItemBG}"/>
+        <Setter Property="Foreground" Value="{StaticResource MainText}"/>
+    </Style>
 </ResourceDictionary>

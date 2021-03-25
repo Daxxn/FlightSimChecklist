@@ -6,6 +6,9 @@
              xmlns:local="clr-namespace:ChecklistApp.Views"
              mc:Ignorable="d" Background="{StaticResource MainBG}"
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.InputBindings>
+        <KeyBinding Command="{Binding Path=SaveCmd}" Key="S" Modifiers="Ctrl"/>
+    </UserControl.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

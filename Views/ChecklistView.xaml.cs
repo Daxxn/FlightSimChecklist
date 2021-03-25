@@ -1,4 +1,5 @@
-﻿using ChecklistApp.ViewModels;
+﻿using ChecklistApp.Models;
+using ChecklistApp.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,27 @@ namespace ChecklistApp.Views
       private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
       {
          VM.SelectedChecklist?.OrganizeItems();
+      }
+
+      private void NewTag_Click(object sender, RoutedEventArgs e)
+      {
+         if (e.Source is Button btn)
+         {
+            if (btn.DataContext is Checklist checklist)
+            {
+               if (checklist.Tags is null) checklist.Tags = new();
+
+               checklist.Tags.Add("New-Tag");
+            }
+         }
+      }
+
+      private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+      {
+         if (sender is TextBox box)
+         {
+            box.SelectAll();
+         }
       }
    }
 }

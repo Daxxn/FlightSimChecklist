@@ -19,6 +19,9 @@
             Tags
         </TextBlock>
 
-        <ListView Grid.Row="1" ItemsSource="{Binding Path=AllTags, UpdateSourceTrigger=PropertyChanged}"/>
+        <ListView
+            Grid.Row="1"
+            ItemsSource="{Binding Path=AllTags, UpdateSourceTrigger=PropertyChanged}"
+        />
     </Grid>
 </UserControl>

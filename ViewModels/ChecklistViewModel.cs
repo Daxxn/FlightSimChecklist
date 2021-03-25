@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace ChecklistApp.ViewModels
 {
@@ -16,6 +17,7 @@ namespace ChecklistApp.ViewModels
       private Aircraft _currentAircraft;
       private Checklist _selectedChecklist;
       private CheckItem _selectedItem;
+      private string _selectedTag;
 
       public Command NewChecklistCmd { get; init; }
       public Command NewCheckItemCmd { get; init; }
@@ -34,7 +36,8 @@ namespace ChecklistApp.ViewModels
       public void LoadNewAircraft(object sender, LoadAircraftEventArgs e)
       {
          CurrentAircraft = e.NewAircraft;
-         if (e.NewAircraft.Checklists != null)
+         if (e.NewAircraft is null) return;
+         if (e?.NewAircraft.Checklists != null)
          {
             SelectedChecklist = CurrentAircraft.Checklists.Count > 0 ? CurrentAircraft.Checklists[0] : null;
          }
@@ -44,7 +47,9 @@ namespace ChecklistApp.ViewModels
       {
          if (CurrentAircraft is null) return;
 
-         CurrentAircraft.Checklists.Add(new Checklist());
+         Checklist newChecklist = new();
+         CurrentAircraft.Checklists.Add(newChecklist);
+         SelectedChecklist = newChecklist;
       }
 
       public void NewCheckItem()
@@ -62,6 +67,15 @@ namespace ChecklistApp.ViewModels
             SelectedItem.Index = SelectedChecklist.Items.Count;
          }
          SelectedChecklist.Items.Add(newItem);
+      }
+
+      public static void NewTag(Checklist cl)
+      {
+         if (cl is null) return;
+
+         if (cl.Tags is null) cl.Tags = new();
+
+         cl.Tags.Add("New-Tag");
       }
       #endregion
 
@@ -92,6 +106,16 @@ namespace ChecklistApp.ViewModels
          set
          {
             _selectedItem = value;
+            OnPropertyChanged();
+         }
+      }
+
+      public string SelectedTag
+      {
+         get { return _selectedTag; }
+         set
+         {
+            _selectedTag = value;
             OnPropertyChanged();
          }
       }

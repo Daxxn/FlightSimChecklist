@@ -22,12 +22,11 @@ namespace ChecklistApp.ViewModels
       private string _aircraftDataSavePath;
       private ObservableCollection<Aircraft> _aircraftData;
       private Aircraft _selectedAircraft;
-      private List<Checklist> AircraftChecklists { get; set; }
+
+      private bool _keepChecklistsCompleted = true;
 
       public Command OpenAircraftDataCmd { get; init; }
       public Command OpenAircraftChecklistCmd { get; init; }
-
-      public Command SelectAircraftCmd { get; init; }
 
       public Command CreateAircraftCmd { get; init; }
       public Command CreateChecklistCmd { get; init; }
@@ -42,7 +41,6 @@ namespace ChecklistApp.ViewModels
       {
          OpenAircraftDataCmd = new Command((o) => LoadAircraftData());
          OpenAircraftChecklistCmd = new Command((o) => LoadAircraftChecklistFile());
-         SelectAircraftCmd = new Command((o) => LoadNewAircraft());
          CreateAircraftCmd = new Command((o) => CreateAircraft());
          CreateChecklistCmd = new Command((o) => CreateChecklist());
          SaveAllAircraftCmd = new Command((o) => SaveAllAircraft());
@@ -72,29 +70,81 @@ namespace ChecklistApp.ViewModels
             Title = "Open Aircraft Data File"
          };
 
-         if (dialog.ShowDialog() == true)
+         if (dialog.ShowDialog() != true) return;
+
+         try
+         {
+            AircraftDataSavePath = dialog.FileName;
+
+            var aircraftData = JsonReader.OpenJsonFile<AircraftDataModel>(AircraftDataSavePath, false);
+
+            if (aircraftData.AircraftData.Any())
+            {
+               AircraftData = new ObservableCollection<Aircraft>(aircraftData.LoadAircraft());
+               ChecklistDir = aircraftData.ChecklistDir;
+               if (AircraftData.Any())
+               {
+                  SelectedAircraft = AircraftData[0];
+               }
+               LoadChecklists();
+               //GetAircraftChecklistFilePaths();
+               //LoadAircraftChecklistFile();
+            }
+            else
+            {
+               MessageBox.Show("File doesnt contain any aircraft.", "Hmm...");
+            }
+         }
+         catch (Exception e)
+         {
+            MessageBox.Show($"Error during aircraft load. :: {e.Message}", "ERROR");
+         }
+      }
+
+      public void GetAircraftChecklistFilePaths()
+      {
+         if (AircraftData != null) return;
+
+         foreach (var aircraft in AircraftData)
+         {
+            if (String.IsNullOrEmpty(aircraft.SavePath))
+            {
+               aircraft.SavePath = Path.Combine(ChecklistDir, aircraft.ToChecklistString());
+            }
+         }
+      }
+
+      public void LoadChecklists()
+      {
+         if (AircraftData is null) return;
+
+         var errors = new List<Exception>();
+         foreach (var aircraft in AircraftData)
          {
             try
             {
-               AircraftDataSavePath = dialog.FileName;
-
-               var aircraftData = JsonReader.OpenJsonFile<AircraftDataModel>(AircraftDataSavePath, false);
-
-               if (aircraftData.AircraftData.Any())
+               if (String.IsNullOrEmpty(aircraft.SavePath))
                {
-                  AircraftData = new ObservableCollection<Aircraft>(aircraftData.AircraftData);
-                  ChecklistDir = aircraftData.ChecklistDir;
-                  LoadAircraftChecklistFile();
+                  string tempPath = Path.Combine(ChecklistDir, aircraft.ToChecklistString());
+                  if (File.Exists(tempPath))
+                  {
+                     aircraft.Checklists = new(JsonReader.OpenJsonFile<List<Checklist>>(tempPath));
+                  }
                }
                else
                {
-                  MessageBox.Show("File doesnt contain any aircraft.", "Hmm...");
+                  aircraft.Checklists = new(JsonReader.OpenJsonFile<List<Checklist>>(aircraft.SavePath));
                }
             }
             catch (Exception e)
             {
-               MessageBox.Show($"Error during aircraft load. :: {e.Message}", "ERROR");
+               errors.Add(e);
             }
+         }
+
+         if (errors.Any())
+         {
+            throw new Exception("Problems loading some checklists.");
          }
       }
 
@@ -102,17 +152,24 @@ namespace ChecklistApp.ViewModels
       {
          try
          {
+            if (ChecklistDir != null && SelectedAircraft != null)
+            {
+               SelectedAircraft.SavePath = Path.Combine(ChecklistDir, SelectedAircraft.ToChecklistString());
+            }
+
             if (selectFirst)
             {
                if (AircraftData.Count > 0)
                {
-                  AircraftChecklists = JsonReader.OpenJsonFile<List<Checklist>>(Path.Combine(ChecklistDir, AircraftData[0].ToChecklistString()));
+                  SelectedAircraft.Checklists = new ObservableCollection<Checklist>(JsonReader.OpenJsonFile<List<Checklist>>(SelectedAircraft.SavePath));
                }
             }
             else
             {
-               AircraftChecklists = JsonReader.OpenJsonFile<List<Checklist>>(Path.Combine(ChecklistDir, SelectedAircraft.ToChecklistString()));
+               SelectedAircraft.Checklists = new ObservableCollection<Checklist>(JsonReader.OpenJsonFile<List<Checklist>>(Path.Combine(ChecklistDir, SelectedAircraft.ToChecklistString())));
             }
+
+            if (KeepChecklistsCompleted) ClearChecklistStatus();
          }
          catch (Exception e)
          {
@@ -120,15 +177,18 @@ namespace ChecklistApp.ViewModels
          }
       }
 
-      public void LoadNewAircraft()
+      public void ClearChecklistStatus()
       {
-         if (AircraftData is null) return;
-
-         if (AircraftChecklists != null)
+         foreach (var aircraft in AircraftData)
          {
-            SelectedAircraft.Checklists = new ObservableCollection<Checklist>(AircraftChecklists);
+            foreach (var checklist in aircraft.Checklists)
+            {
+               foreach (var item in checklist.Items)
+               {
+                  item.Checked = false;
+               }
+            }
          }
-         LoadAircraftEvent?.Invoke(this, new LoadAircraftEventArgs(SelectedAircraft));
       }
 
       public void CreateAircraft()
@@ -159,7 +219,10 @@ namespace ChecklistApp.ViewModels
 
          try
          {
-            JsonReader.SaveJsonFile(AircraftDataSavePath, AircraftData);
+            AircraftDataModel data = new();
+            data.SaveAircraft(AircraftData);
+            data.ChecklistDir = ChecklistDir;
+            JsonReader.SaveJsonFile(AircraftDataSavePath, data, true);
          }
          catch (Exception e)
          {
@@ -183,6 +246,8 @@ namespace ChecklistApp.ViewModels
                   errors.Add(e);
                }
             }
+
+            if (KeepChecklistsCompleted) ClearChecklistStatus();
 
             if (errors.Count > 0)
             {
@@ -217,12 +282,8 @@ namespace ChecklistApp.ViewModels
          if (String.IsNullOrEmpty(aircraft.SavePath))
          {
             aircraft.SavePath = Path.Combine(ChecklistDir, aircraft.ToChecklistString());
-            JsonReader.SaveJsonFile(aircraft.SavePath, aircraft.Checklists, true);
          }
-         else
-         {
-            JsonReader.SaveJsonFile(aircraft.SavePath, aircraft.Checklists);
-         }
+         JsonReader.SaveJsonFile(aircraft.SavePath, aircraft.Checklists, true);
       }
       #endregion
 
@@ -264,6 +325,18 @@ namespace ChecklistApp.ViewModels
          set
          {
             _selectedAircraft = value;
+            LoadAircraftEvent?.Invoke(this, new LoadAircraftEventArgs(value));
+            OnPropertyChanged();
+         }
+      }
+
+
+      public bool KeepChecklistsCompleted
+      {
+         get { return _keepChecklistsCompleted; }
+         set
+         {
+            _keepChecklistsCompleted = value;
             OnPropertyChanged();
          }
       }

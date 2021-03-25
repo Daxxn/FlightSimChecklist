@@ -20,7 +20,6 @@ namespace ChecklistApp.Models
       public string SavePath { get; set; }
 
       private ObservableCollection<Checklist> _checklists;
-      private ObservableCollection<string> _checklistStates;
       #endregion
 
       #region - Constructors
@@ -38,6 +37,19 @@ namespace ChecklistApp.Models
       public string ToChecklistString()
       {
          return $"{Make}{Model}{SubModel}_{(int)Type}_{Version}.json";
+      }
+
+      public AircraftSaveModel Save()
+      {
+         return new AircraftSaveModel
+         {
+            Make = Make,
+            Model = Model,
+            SubModel = SubModel,
+            Type = Type,
+            SavePath = SavePath,
+            Version = Version
+         };
       }
       #endregion
 
@@ -88,16 +100,6 @@ namespace ChecklistApp.Models
          set
          {
             _checklists = value;
-            OnPropertyChanged();
-         }
-      }
-
-      public ObservableCollection<string> ChecklistStates
-      {
-         get { return _checklistStates; }
-         set
-         {
-            _checklistStates = value;
             OnPropertyChanged();
          }
       }

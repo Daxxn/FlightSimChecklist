@@ -69,7 +69,6 @@ namespace ChecklistApp.Models
          {
             _index = value;
             OnPropertyChanged();
-            //OnPropertyChanged(nameof(IndexDisplay));
          }
       }
 

@@ -6,7 +6,11 @@
              xmlns:local="clr-namespace:ChecklistApp.Views"
              xmlns:enums="clr-namespace:ChecklistApp.Models.Enums"
              mc:Ignorable="d" Background="{StaticResource MainBG}"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             >
+    <UserControl.InputBindings>
+        <KeyBinding Command="{Binding Path=SaveAllCmd}" Key="S" Modifiers="Ctrl+Shift"/>
+    </UserControl.InputBindings>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -47,7 +51,11 @@
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
-                                            <ListView Grid.Column="0" ItemsSource="{Binding Path=Tags}">
+                                            <ListView
+                                                Grid.Column="0"
+                                                ItemsSource="{Binding Path=Tags}"
+                                                SelectedItem="{Binding Path=SelectedTag}"
+                                            >
                                                 <ListView.ItemsPanel>
                                                     <ItemsPanelTemplate>
                                                         <WrapPanel Orientation="Horizontal" Width="200" MaxWidth="300"/>
@@ -56,12 +64,21 @@
                                                 <ListView.ItemTemplate>
                                                     <DataTemplate>
                                                         <Border Style="{StaticResource TagItemBorder}">
-                                                            <TextBlock Text="{Binding}"/>
+                                                            <TextBox GotFocus="TextBox_GotFocus" Style="{StaticResource TagText}" Text="{Binding Path=.}" MaxLength="20"/>
                                                         </Border>
                                                     </DataTemplate>
                                                 </ListView.ItemTemplate>
                                             </ListView>
-                                            <Button x:Name="NewTagButton" Grid.Column="1" MinHeight="20" MaxHeight="30" MinWidth="20">+</Button>
+                                            <Button
+                                                Click="NewTag_Click"
+                                                Grid.Column="1"
+                                                MinHeight="20"
+                                                MaxHeight="30"
+                                                MinWidth="20"
+                                                Style="{StaticResource AddButton}"
+                                            >
+                                                +
+                                            </Button>
                                         </Grid>
                                     </Grid>
                                 </Border>

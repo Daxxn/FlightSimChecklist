@@ -38,6 +38,7 @@ namespace ChecklistApp.ViewModels
          {
             _currentAircraft = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(AllTags));
          }
       }
 
@@ -51,7 +52,10 @@ namespace ChecklistApp.ViewModels
             List<string> output = new();
             foreach (var cl in CurrentAircraft.Checklists)
             {
-               output.AddRange(cl.Tags);
+               if (cl.Tags != null)
+               {
+                  output.AddRange(cl.Tags);
+               }
             }
             return output;
          }

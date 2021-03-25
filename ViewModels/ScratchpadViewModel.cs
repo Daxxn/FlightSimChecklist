@@ -30,7 +30,6 @@ namespace ChecklistApp.ViewModels
       #endregion
 
       #region - Full Properties
-
       public string SavePath
       {
          get { return _savePath; }
