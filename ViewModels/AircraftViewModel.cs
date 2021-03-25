@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 
 namespace ChecklistApp.ViewModels
 {
@@ -22,9 +23,14 @@ namespace ChecklistApp.ViewModels
       private string _aircraftDataSavePath;
       private ObservableCollection<Aircraft> _aircraftData;
       private Aircraft _selectedAircraft;
+      private readonly List<FileDialogCustomPlace> CustomPlaces = new()
+      {
+         new FileDialogCustomPlace(@"D:\FlightSimData\CustomChecklists")
+      };
 
       private bool _keepChecklistsCompleted = true;
 
+      public Command NewAircraftDataCmd { get; init; }
       public Command OpenAircraftDataCmd { get; init; }
       public Command OpenAircraftChecklistCmd { get; init; }
 
@@ -32,20 +38,26 @@ namespace ChecklistApp.ViewModels
       public Command CreateChecklistCmd { get; init; }
 
       public Command SaveAllAircraftCmd { get; init; }
+      public Command SaveAllAircraftAsCmd { get; init; }
       public Command SaveSelectedAircraftCmd { get; init; }
       public Command SaveAllChecklistsCmd { get; init; }
+
+      public Command SelectChecklistDirCmd { get; init; }
       #endregion
 
       #region - Constructors
       public AircraftViewModel()
       {
+         NewAircraftDataCmd = new Command((o) => NewAircraftData());
          OpenAircraftDataCmd = new Command((o) => LoadAircraftData());
          OpenAircraftChecklistCmd = new Command((o) => LoadAircraftChecklistFile());
          CreateAircraftCmd = new Command((o) => CreateAircraft());
          CreateChecklistCmd = new Command((o) => CreateChecklist());
          SaveAllAircraftCmd = new Command((o) => SaveAllAircraft());
+         SaveAllAircraftAsCmd = new Command((o) => SaveAllAircraftAs());
          SaveSelectedAircraftCmd = new Command((o) => SaveSelectedAircraft());
          SaveAllChecklistsCmd = new Command((o) => SaveAllChecklists());
+         SelectChecklistDirCmd = new Command((o) => SelectChecklistDir());
 
          MainViewModel.SaveAllEvent += MainViewModel_SaveAllEvent;
       }
@@ -55,6 +67,47 @@ namespace ChecklistApp.ViewModels
       private void MainViewModel_SaveAllEvent(object sender, EventArgs e)
       {
          SaveAllAircraft();
+      }
+
+      public void NewAircraftData()
+      {
+         if (AircraftData is not null)
+         {
+            var result = MessageBox.Show("Theres one open already. Save it first??", "Hold On", MessageBoxButton.YesNoCancel);
+
+            if (result == MessageBoxResult.Yes)
+            {
+               SaveAllAircraft();
+            }
+            else if (result == MessageBoxResult.Cancel)
+            {
+               return;
+            }
+         }
+
+         AircraftData = null;
+         ChecklistDir = null;
+         AircraftDataSavePath = null;
+         SelectedAircraft = null;
+
+         AircraftData = new();
+      }
+
+      public void SelectChecklistDir()
+      {
+         OpenFileDialog dialog = new()
+         {
+            DefaultExt = null,
+            CheckPathExists = false,
+            CheckFileExists = false,
+            AddExtension = false,
+            ValidateNames = false,
+            Title = "Select Checklist Dir"
+         };
+
+         if (dialog.ShowDialog() is not true) return;
+
+         ChecklistDir = dialog.FileName;
       }
 
       public void LoadAircraftData()
@@ -87,8 +140,6 @@ namespace ChecklistApp.ViewModels
                   SelectedAircraft = AircraftData[0];
                }
                LoadChecklists();
-               //GetAircraftChecklistFilePaths();
-               //LoadAircraftChecklistFile();
             }
             else
             {
@@ -98,19 +149,6 @@ namespace ChecklistApp.ViewModels
          catch (Exception e)
          {
             MessageBox.Show($"Error during aircraft load. :: {e.Message}", "ERROR");
-         }
-      }
-
-      public void GetAircraftChecklistFilePaths()
-      {
-         if (AircraftData != null) return;
-
-         foreach (var aircraft in AircraftData)
-         {
-            if (String.IsNullOrEmpty(aircraft.SavePath))
-            {
-               aircraft.SavePath = Path.Combine(ChecklistDir, aircraft.ToChecklistString());
-            }
          }
       }
 
@@ -230,6 +268,26 @@ namespace ChecklistApp.ViewModels
          }
       }
 
+      public void SaveAllAircraftAs()
+      {
+         SaveFileDialog dialog = new()
+         {
+            CustomPlaces = CustomPlaces,
+            Title = "Save Aircraft Data File",
+            DefaultExt = ".ard",
+            AddExtension = true,
+            Filter = "Aircraft Data|*.ard|JSON|*.json|ALL|*.*",
+            OverwritePrompt = true,
+            CheckFileExists = false,
+         };
+
+         if (dialog.ShowDialog() is not true) return;
+
+         AircraftDataSavePath = dialog.FileName;
+
+         SaveAllAircraft();
+      }
+
       public void SaveAllChecklists()
       {
          try
@@ -295,6 +353,7 @@ namespace ChecklistApp.ViewModels
          {
             _checklistDir = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(GoodChecklistDir));
          }
       }
 
@@ -339,6 +398,12 @@ namespace ChecklistApp.ViewModels
             _keepChecklistsCompleted = value;
             OnPropertyChanged();
          }
+      }
+
+
+      public SolidColorBrush GoodChecklistDir
+      {
+         get => Directory.Exists(ChecklistDir) ? new(Color.FromRgb(0,255,0)) : new(Color.FromRgb(255,0,0));
       }
       #endregion
    }

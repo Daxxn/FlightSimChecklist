@@ -30,7 +30,7 @@ namespace ChecklistApp.Views
          InitializeComponent();
       }
 
-      private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+      private void IndexTextBox_TextChanged(object sender, TextChangedEventArgs e)
       {
          VM.SelectedChecklist?.OrganizeItems();
       }
@@ -43,7 +43,8 @@ namespace ChecklistApp.Views
             {
                if (checklist.Tags is null) checklist.Tags = new();
 
-               checklist.Tags.Add("New-Tag");
+               checklist.Tags.Add("NewTag");
+               VM.UpdateTags();
             }
          }
       }
@@ -52,7 +53,55 @@ namespace ChecklistApp.Views
       {
          if (sender is TextBox box)
          {
+            box.Focus();
             box.SelectAll();
+         }
+         e.Handled = true;
+      }
+
+      private void TextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+      {
+         if (sender is TextBox box)
+         {
+            box.Focus();
+            box.SelectAll();
+            box.ScrollToEnd();
+         }
+         e.Handled = true;
+      }
+
+      private void TextBox_MouseDown(object sender, MouseButtonEventArgs e)
+      {
+         if (sender is TextBox box)
+         {
+            box.Focus();
+            box.SelectAll();
+            box.ScrollToEnd();
+         }
+         e.Handled = true;
+      }
+
+      private void TagTextBox_TextChanged(object sender, TextChangedEventArgs e)
+      {
+         if (e.Changes.Count > 0) VM.UpdateTags();
+      }
+
+      private void Delete_KeyDown(object sender, KeyEventArgs e)
+      {
+         if (e.Key == Key.Delete)
+         {
+            if (sender is TextBox box)
+            {
+
+            }
+         }
+      }
+
+      private void DeleteTag_Click(object sender, RoutedEventArgs e)
+      {
+         if (sender is MenuItem menu)
+         {
+            VM.DeleteTag(menu.DataContext as string);
          }
       }
    }

@@ -12,12 +12,24 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock
+        <StackPanel 
             Grid.Row="0"
-            Style="{StaticResource MediumTitle}"
+            Orientation="Horizontal"
         >
+            <TextBlock
+                Style="{StaticResource MediumTitle}"
+            >
             Tags
-        </TextBlock>
+            </TextBlock>
+            <TextBlock
+                Padding="10,0,0,0"
+                FontSize="12"
+                VerticalAlignment="Bottom"
+                Style="{StaticResource MediumTitle}"
+            >
+                Still not working correctly yet.
+            </TextBlock>
+        </StackPanel>
 
         <ListView
             Grid.Row="1"

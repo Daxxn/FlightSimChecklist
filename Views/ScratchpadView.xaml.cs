@@ -26,5 +26,18 @@ namespace ChecklistApp.Views
          DataContext = new ScratchpadViewModel();
          InitializeComponent();
       }
+
+      private void SelectAll_Click(object sender, RoutedEventArgs e)
+      {
+         ScratchPadText.Focus();
+         ScratchPadText.SelectAll();
+         e.Handled = true;
+      }
+
+      private void ClearAll_Click(object sender, RoutedEventArgs e)
+      {
+         ScratchPadText.Focus();
+         e.Handled = true;
+      }
    }
 }

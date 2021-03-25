@@ -28,6 +28,10 @@ namespace ChecklistApp.ViewModels
       #endregion
 
       #region - Methods
+      public static void SaveAll()
+      {
+         SaveAllEvent?.Invoke(null, null);
+      }
       #endregion
 
       #region - Full Properties

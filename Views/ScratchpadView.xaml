@@ -20,16 +20,26 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Padding="4" FontSize="16" Style="{StaticResource MediumTitle}">Scratch Pad</TextBlock>
+
             <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <Button Click="SelectAll_Click" Margin="0,0,2,0">Select All</Button>
+                <Button Command="{Binding Path=ClearAllCmd}" Click="ClearAll_Click">Clear All</Button>
+            </StackPanel>
+            
+            <StackPanel Grid.Column="4" Orientation="Horizontal">
                 <Button Command="{Binding Path=SaveCmd}" Margin="0,0,2,0">Save</Button>
-                <Button Command="{Binding Path=LoadCmd}">Load</Button>
+                <Button Command="{Binding Path=OpenCmd}">Open</Button>
             </StackPanel>
         </Grid>
         
         <TextBox
+            x:Name="ScratchPadText"
             FontSize="{Binding Path=FontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+            Text="{Binding Path=ScratchPadNotes}"
             MinLines="1"
             Margin="10"
             Padding="4"

@@ -18,6 +18,7 @@ namespace ChecklistApp.Models
       private AircraftType _type;
       public int Version { get; set; }
       public string SavePath { get; set; }
+      public string ChartsFile { get; set; }
 
       private ObservableCollection<Checklist> _checklists;
       #endregion
@@ -101,6 +102,23 @@ namespace ChecklistApp.Models
          {
             _checklists = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(Checklists));
+         }
+      }
+
+      public ObservableCollection<string> AllTags
+      {
+         get
+         {
+            ObservableCollection<string> output = new();
+            foreach (var cl in Checklists)
+            {
+               foreach (var tag in cl.Tags)
+               {
+                  if (!output.Contains(tag)) output.Add(tag);
+               }
+            }
+            return output;
          }
       }
       #endregion

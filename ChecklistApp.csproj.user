@@ -10,6 +10,9 @@
     <Compile Update="Views\AircraftView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\ChartView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\ChecklistView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -28,6 +31,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\AircraftView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\ChartView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\ChecklistView.xaml">

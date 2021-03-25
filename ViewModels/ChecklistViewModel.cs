@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace ChecklistApp.ViewModels
@@ -14,13 +15,16 @@ namespace ChecklistApp.ViewModels
    public class ChecklistViewModel : ViewModel
    {
       #region - Fields & Properties
+      public static event EventHandler<UpdateTagsEventArgs> UpdateTagsEvent;
       private Aircraft _currentAircraft;
       private Checklist _selectedChecklist;
       private CheckItem _selectedItem;
-      private string _selectedTag;
 
       public Command NewChecklistCmd { get; init; }
       public Command NewCheckItemCmd { get; init; }
+      public Command SaveAllCmd { get; init; }
+      public Command DeleteChecklistCmd { get; init; }
+      public Command DeleteCheckItemCmd { get; init; }
       #endregion
 
       #region - Constructors
@@ -29,6 +33,9 @@ namespace ChecklistApp.ViewModels
          AircraftViewModel.LoadAircraftEvent += LoadNewAircraft;
          NewChecklistCmd = new Command((o) => NewChecklist());
          NewCheckItemCmd = new Command((o) => NewCheckItem());
+         SaveAllCmd = new Command((o) => MainViewModel.SaveAll());
+         DeleteChecklistCmd = new Command((o) => DeleteChecklist());
+         DeleteCheckItemCmd = new Command((o) => DeleteCheckItem());
       }
       #endregion
 
@@ -69,13 +76,31 @@ namespace ChecklistApp.ViewModels
          SelectedChecklist.Items.Add(newItem);
       }
 
-      public static void NewTag(Checklist cl)
+      public void UpdateTags()
       {
-         if (cl is null) return;
+         UpdateTagsEvent?.Invoke(this, new(CurrentAircraft));
+      }
 
-         if (cl.Tags is null) cl.Tags = new();
+      public void DeleteTag(string tag)
+      {
+         SelectedChecklist.Tags.Remove(tag);
+      }
 
-         cl.Tags.Add("New-Tag");
+      public void DeleteChecklist()
+      {
+         if (CurrentAircraft is null || CurrentAircraft.Checklists is null) return;
+
+         if (MessageBox.Show("U Sure??", "Wait..", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
+
+         CurrentAircraft.Checklists.Remove(SelectedChecklist);
+         SelectedChecklist = null;
+      }
+
+      public void DeleteCheckItem()
+      {
+         if (SelectedChecklist is null || SelectedChecklist.Items is null) return;
+         SelectedChecklist.Items.Remove(SelectedItem);
+         SelectedItem = null;
       }
       #endregion
 
@@ -106,16 +131,6 @@ namespace ChecklistApp.ViewModels
          set
          {
             _selectedItem = value;
-            OnPropertyChanged();
-         }
-      }
-
-      public string SelectedTag
-      {
-         get { return _selectedTag; }
-         set
-         {
-            _selectedTag = value;
             OnPropertyChanged();
          }
       }

@@ -7,8 +7,10 @@
              xmlns:enums="clr-namespace:ChecklistApp.Models.Enums"
              mc:Ignorable="d" Background="{StaticResource MainBG}"
              d:DesignHeight="450" d:DesignWidth="800"
-             >
+>
     <UserControl.InputBindings>
+        <KeyBinding Command="{Binding Path=DeleteCheckItemCmd}" Key="Delete"/>
+        <KeyBinding Command="{Binding Path=DeleteChecklistCmd}" Key="Delete" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding Path=SaveAllCmd}" Key="S" Modifiers="Ctrl+Shift"/>
     </UserControl.InputBindings>
     <Grid>
@@ -53,8 +55,7 @@
                                             </Grid.ColumnDefinitions>
                                             <ListView
                                                 Grid.Column="0"
-                                                ItemsSource="{Binding Path=Tags}"
-                                                SelectedItem="{Binding Path=SelectedTag}"
+                                                ItemsSource="{Binding Path=Tags, UpdateSourceTrigger=PropertyChanged}"
                                             >
                                                 <ListView.ItemsPanel>
                                                     <ItemsPanelTemplate>
@@ -63,8 +64,22 @@
                                                 </ListView.ItemsPanel>
                                                 <ListView.ItemTemplate>
                                                     <DataTemplate>
-                                                        <Border Style="{StaticResource TagItemBorder}">
-                                                            <TextBox GotFocus="TextBox_GotFocus" Style="{StaticResource TagText}" Text="{Binding Path=.}" MaxLength="20"/>
+                                                        <Border KeyDown="Delete_KeyDown" Style="{StaticResource TagItemBorder}">
+                                                            <TextBox
+                                                                MouseDown="TextBox_MouseDown"
+                                                                GotFocus="TextBox_GotFocus"
+                                                                GotKeyboardFocus="TextBox_GotKeyboardFocus"
+                                                                TextChanged="TagTextBox_TextChanged"
+                                                                
+                                                                Style="{StaticResource TagText}" Text="{Binding Path=., UpdateSourceTrigger=PropertyChanged}"
+                                                                MaxLength="20"
+                                                            >
+                                                                <TextBox.ContextMenu>
+                                                                    <ContextMenu>
+                                                                        <MenuItem Header="Delete" Click="DeleteTag_Click"/>
+                                                                    </ContextMenu>
+                                                                </TextBox.ContextMenu>
+                                                            </TextBox>
                                                         </Border>
                                                     </DataTemplate>
                                                 </ListView.ItemTemplate>
@@ -87,12 +102,14 @@
                     </ListView>
                 </Border>
 
-                <Button
-                    Grid.Row="2"
-                    Command="{Binding Path=NewChecklistCmd}"
-                >
-                    New Checklist
-                </Button>
+                <StackPanel Grid.Row="2">
+                    <Button Margin="0,10,0,20" Command="{Binding Path=DeleteChecklistCmd}">Delete Checklist</Button>
+                    <Button
+                        Command="{Binding Path=NewChecklistCmd}"
+                    >
+                        New Checklist
+                    </Button>
+                </StackPanel>
             </Grid>
         </Border>
 
@@ -132,10 +149,10 @@
                                     </Grid.ColumnDefinitions>
 
                                     <CheckBox IsChecked="{Binding Path=Checked}"/>
-                                    <TextBlock Grid.Column="1" Padding="10,0" Text="{Binding Path=Index}"/>
-                                    <TextBlock Grid.Column="2" Padding="10,0" Text="{Binding Path=Action}"/>
-                                    <TextBlock Grid.Column="4" Text="{Binding Path=Description}"/>
-                                    <TextBlock Grid.Column="5" Padding="10,0,0,0" Text="{Binding Path=ExtraInfo}"/>
+                                    <TextBlock Grid.Column="1" Margin="10,0" Style="{StaticResource CheckItemText}" Text="{Binding Path=Index}"/>
+                                    <TextBlock Grid.Column="2" Margin="10,0" Style="{StaticResource CheckItemText}" Text="{Binding Path=Action}"/>
+                                    <TextBlock Grid.Column="4" MinWidth="200" Style="{StaticResource CheckItemText}" Text="{Binding Path=Description}"/>
+                                    <TextBlock Grid.Column="5" Margin="10,0,0,0" Style="{StaticResource CheckItemText}" Text="{Binding Path=ExtraInfo}"/>
                                 </Grid>
                             </Border>
                         </DataTemplate>
@@ -144,19 +161,27 @@
 
                 <Grid Grid.Row="3">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Expander Grid.Column="0" Style="{StaticResource ExpanderBase}">
+                    <Button
+                        Grid.Column="0"
+                        Command="{Binding Path=DeleteCheckItemCmd}"
+                        MinWidth="30"
+                        Style="{StaticResource SubtButton}"
+                        Margin="0,0,20,0"
+                    />
+                    <Expander Grid.Column="1" Style="{StaticResource ExpanderBase}">
                         <Expander.Header>
                             <TextBlock Foreground="{StaticResource MainText}">Edit</TextBlock>
                         </Expander.Header>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*" MinWidth="100"/>
                                 <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*" MaxWidth="100"/>
+                                <ColumnDefinition Width="*" MinWidth="300"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -171,8 +196,10 @@
                                 MaxLength="4"
                                 MinWidth="40"
                                 MaxWidth="100"
-                                TextChanged="TextBox_TextChanged"
+                                HorizontalAlignment="Left"
+                                TextChanged="IndexTextBox_TextChanged"
                                 Margin="0,0,10,0"
+                                Style="{StaticResource CheckItemBox}"
                                 Text="{Binding Path=SelectedItem.Index, UpdateSourceTrigger=PropertyChanged}"
                             />
 
@@ -181,6 +208,7 @@
                                 Grid.Row="0"
                                 Grid.Column="3"
                                 Margin="0,1,0,1"
+                                Style="{StaticResource CheckItemBox}"
                                 Text="{Binding Path=SelectedItem.Action}"
                              />
                             
@@ -190,6 +218,7 @@
                                 Grid.Row="1"
                                 Grid.Column="1"
                                 Grid.ColumnSpan="3"
+                                Style="{StaticResource CheckItemBox}"
                                 Text="{Binding Path=SelectedItem.Description}"
                             />
                             
@@ -199,13 +228,14 @@
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 Grid.ColumnSpan="3"
+                                Style="{StaticResource CheckItemBox}"
                                 Text="{Binding Path=SelectedItem.ExtraInfo}"
                             />
                         </Grid>
                     </Expander>
 
                     <Button
-                        Grid.Column="1"
+                        Grid.Column="2"
                         MinWidth="30"
                         Command="{Binding Path=NewCheckItemCmd}"
                         Style="{StaticResource AddButton}"

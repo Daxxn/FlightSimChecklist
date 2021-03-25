@@ -13,12 +13,14 @@ namespace ChecklistApp.ViewModels
    {
       #region - Fields & Properties
       private Aircraft _currentAircraft;
+      private string _selectedTag;
       #endregion
 
       #region - Constructors
       public TagManagerViewModel()
       {
          AircraftViewModel.LoadAircraftEvent += NewAircraftEvent;
+         ChecklistViewModel.UpdateTagsEvent += UpdateTags;
       }
       #endregion
 
@@ -27,10 +29,15 @@ namespace ChecklistApp.ViewModels
       {
          CurrentAircraft = e.NewAircraft;
       }
+
+      public void UpdateTags(object sender, UpdateTagsEventArgs e)
+      {
+         if (e is not null) CurrentAircraft = e.UpdatedAircraft;
+         OnPropertyChanged(nameof(AllTags));
+      }
       #endregion
 
       #region - Full Properties
-
       public Aircraft CurrentAircraft
       {
          get { return _currentAircraft; }
@@ -58,6 +65,16 @@ namespace ChecklistApp.ViewModels
                }
             }
             return output;
+         }
+      }
+
+      public string SelectedTag
+      {
+         get { return _selectedTag; }
+         set
+         {
+            _selectedTag = value;
+            OnPropertyChanged();
          }
       }
       #endregion

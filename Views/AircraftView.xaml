@@ -8,7 +8,7 @@
              mc:Ignorable="d"  Background="{StaticResource MainBG}"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.InputBindings>
-        <KeyBinding Command="{Binding Path=SaveAllCmd}" Key="S" Modifiers="Ctrl+Shift"/>
+        <KeyBinding Command="{Binding Path=SaveAllAircraftCmd}" Key="S" Modifiers="Ctrl+Shift"/>
     </UserControl.InputBindings>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -27,8 +27,8 @@
 
                 <Border Grid.Row="0" Padding="0,10,0,10">
                     <StackPanel>
+                        <Button Command="{Binding Path=NewAircraftDataCmd}">New Aircraft Data File</Button>
                         <Button Command="{Binding Path=OpenAircraftDataCmd}">Open Aircraft Data File</Button>
-                        <!--<Button Command="{Binding Path=SelectAircraftCmd}">Select Aircraft</Button>-->
                     </StackPanel>
                 </Border>
 
@@ -42,6 +42,7 @@
                 <Border Grid.Row="2" Padding="0,10,0,10">
                     <StackPanel>
                         <Button Command="{Binding Path=SaveAllAircraftCmd}">Save All Aircraft</Button>
+                        <Button Command="{Binding Path=SaveAllAircraftAsCmd}">Save All Aircraft As</Button>
                         <Button Command="{Binding Path=SaveAllChecklistsCmd}">
                             <Button.ToolTip>
                                 <TextBlock>Not recommended. Best to save all aircraft.</TextBlock>
@@ -65,35 +66,106 @@
         <Border Grid.Column="1">
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
+                <Grid Grid.Row="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource MediumTitle}" Grid.Column="0">
+                            <TextBlock.ToolTip>
+                                <TextBlock>Its the only easy way to select a folder right now.</TextBlock>
+                            </TextBlock.ToolTip>
+                            Aircraft Folder
+                        </TextBlock>
+                        <TextBlock
+                            Grid.Column="1"
+                            Style="{StaticResource AircraftFileText}"
+                            Text="{Binding
+                                Path=AircraftDataSavePath,
+                                Mode=OneWay
+                            }"
+                        />
+                    </Grid>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource MediumTitle}" Grid.Column="0">
+                            <TextBlock.ToolTip>
+                                <TextBlock>Its the only easy way to select a folder right now.</TextBlock>
+                            </TextBlock.ToolTip>
+                            Checklist Folder
+                        </TextBlock>
+                        <TextBox Grid.Column="1" Text="{Binding Path=ChecklistDir, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBox.ToolTip>
+                                <TextBlock>
+                                <Run>Its the only easy way to select a folder right now.</Run>
+                                <LineBreak/>
+                                <Run>Recommend Copy/Paste.</Run>
+                                </TextBlock>
+                            </TextBox.ToolTip>
+                        </TextBox>
+                        <Rectangle
+                            Grid.Column="2"
+                            Margin="4"
+                            RadiusX="10"
+                            RadiusY="10"
+                            Width="30"
+                            Height="20"
+                            Fill="{Binding
+                                Path=GoodChecklistDir,
+                                UpdateSourceTrigger=PropertyChanged,
+                                FallbackValue=Red
+                            }"
+                            Stroke="{Binding
+                                Path=GoodChecklistDir,
+                                UpdateSourceTrigger=PropertyChanged,
+                                FallbackValue=Red
+                            }"
+                        />
+                    </Grid>
+                </Grid>
+                
                 <ListView
-                    Grid.Row="0"
+                    Grid.Row="1"
                     ItemsSource="{Binding Path=AircraftData}"
                     SelectedItem="{Binding Path=SelectedAircraft}"
                 >
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition SharedSizeGroup="a"/>
-                                    <ColumnDefinition SharedSizeGroup="b"/>
-                                    <ColumnDefinition SharedSizeGroup="c"/>
-                                    <ColumnDefinition SharedSizeGroup="d"/>
-                                </Grid.ColumnDefinitions>
+                            <Border Style="{StaticResource AircraftSelItemBorder}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition SharedSizeGroup="a"/>
+                                        <ColumnDefinition SharedSizeGroup="b"/>
+                                        <ColumnDefinition SharedSizeGroup="c"/>
+                                        <ColumnDefinition SharedSizeGroup="d"/>
+                                    </Grid.ColumnDefinitions>
 
-                                <TextBlock Grid.Column="0" Text="{Binding Path=Make}" Style="{StaticResource WhiteText}"/>
-                                <TextBlock Grid.Column="1" Text="{Binding Path=Model}" Style="{StaticResource WhiteText}"/>
-                                <TextBlock Grid.Column="2" Text="{Binding Path=SubModel}" Style="{StaticResource WhiteText}"/>
-                                <TextBlock Grid.Column="3" Text="{Binding Path=Type, StringFormat=({0})}" Style="{StaticResource WhiteText}"/>
-                            </Grid>
+                                    <TextBlock Grid.Column="0" Text="{Binding Path=Make}" Style="{StaticResource AircraftListText}"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Path=Model}" Style="{StaticResource AircraftListText}"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding Path=SubModel}" Style="{StaticResource AircraftListText}"/>
+                                    <TextBlock Grid.Column="3" Text="{Binding Path=Type, StringFormat=({0})}" Style="{StaticResource AircraftListText}"/>
+                                </Grid>
+                            </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
 
-                <Expander Grid.Row="1" Style="{StaticResource ExpanderBase}">
+                <Expander Grid.Row="2" Style="{StaticResource ExpanderBase}">
                     <Expander.Header>
                         <TextBlock Foreground="{StaticResource MainText}">Edit</TextBlock>
                     </Expander.Header>
