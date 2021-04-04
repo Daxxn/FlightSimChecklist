@@ -16,11 +16,9 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
 
         <Border Style="{StaticResource ControlsBorder}">
             <Grid>
@@ -64,14 +62,18 @@
                                                 </ListView.ItemsPanel>
                                                 <ListView.ItemTemplate>
                                                     <DataTemplate>
-                                                        <Border KeyDown="Delete_KeyDown" Style="{StaticResource TagItemBorder}">
+                                                        <Border Style="{StaticResource TagItemBorder}">
                                                             <TextBox
                                                                 MouseDown="TextBox_MouseDown"
                                                                 GotFocus="TextBox_GotFocus"
                                                                 GotKeyboardFocus="TextBox_GotKeyboardFocus"
                                                                 TextChanged="TagTextBox_TextChanged"
                                                                 
-                                                                Style="{StaticResource TagText}" Text="{Binding Path=., UpdateSourceTrigger=PropertyChanged}"
+                                                                Style="{StaticResource TagText}"
+                                                                Text="{Binding
+                                                                    Path=Value,
+                                                                    UpdateSourceTrigger=PropertyChanged
+                                                                }"
                                                                 MaxLength="20"
                                                             >
                                                                 <TextBox.ContextMenu>
@@ -113,7 +115,15 @@
             </Grid>
         </Border>
 
-        <Border Style="{StaticResource CurrentChecklistBorder}">
+        <GridSplitter
+            Grid.Column="1"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            ResizeDirection="Columns"
+            Background="{StaticResource TagItemBG}"
+        />
+
+        <Border Grid.Column="2" Style="{StaticResource CurrentChecklistBorder}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -122,15 +132,42 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock
-                    Grid.Row="0"
-                    Text="{Binding Path=SelectedChecklist.Name}"
-                    FontSize="20"
-                    Style="{StaticResource WhiteText}"
-                />
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock
+                        Grid.Column="0"
+                        Text="{Binding Path=SelectedChecklist.Name}"
+                        FontSize="20"
+                        Style="{StaticResource WhiteText}"
+                    />
+                    <Slider
+                        Grid.Column="1"
+                        Value="{Binding
+                            Path=FontSize,
+                            UpdateSourceTrigger=PropertyChanged
+                        }"
+                        Minimum="10"
+                        Maximum="50"
+                        TickFrequency="1"
+                        SmallChange="1"
+                        LargeChange="5"
+                        Interval="1"
+                        AutoToolTipPlacement="TopLeft"
+                        MinWidth="100"
+                        MaxWidth="300"
+                        IsSnapToTickEnabled="True"
+                        
+                    />
+                </Grid>
 
                 <ListView
+                    x:Name="ChecklistDataView"
                     Grid.Row="2"
+                    FontSize="{Binding Path=FontSize}"
                     Grid.IsSharedSizeScope="True"
                     ItemsSource="{Binding Path=SelectedChecklist.Items}"
                     SelectedItem="{Binding Path=SelectedItem}"
@@ -149,10 +186,50 @@
                                     </Grid.ColumnDefinitions>
 
                                     <CheckBox IsChecked="{Binding Path=Checked}"/>
-                                    <TextBlock Grid.Column="1" Margin="10,0" Style="{StaticResource CheckItemText}" Text="{Binding Path=Index}"/>
-                                    <TextBlock Grid.Column="2" Margin="10,0" Style="{StaticResource CheckItemText}" Text="{Binding Path=Action}"/>
-                                    <TextBlock Grid.Column="4" MinWidth="200" Style="{StaticResource CheckItemText}" Text="{Binding Path=Description}"/>
-                                    <TextBlock Grid.Column="5" Margin="10,0,0,0" Style="{StaticResource CheckItemText}" Text="{Binding Path=ExtraInfo}"/>
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        Margin="10,0"
+                                        FontSize="{Binding
+                                            ElementName=ChecklistDataView,
+                                            Path=FontSize,
+                                            UpdateSourceTrigger=PropertyChanged
+                                        }"
+                                        Style="{StaticResource CheckItemText}"
+                                        Text="{Binding Path=Index}"
+                                    />
+                                    <TextBlock
+                                        Grid.Column="2"
+                                        Margin="10,0"
+                                        FontSize="{Binding
+                                            ElementName=ChecklistDataView,
+                                            Path=FontSize,
+                                            UpdateSourceTrigger=PropertyChanged
+                                        }"
+                                        Style="{StaticResource CheckItemText}"
+                                        Text="{Binding Path=Action}"
+                                    />
+                                    <TextBlock
+                                        Grid.Column="4"
+                                        MinWidth="200"
+                                        FontSize="{Binding
+                                            ElementName=ChecklistDataView,
+                                            Path=FontSize,
+                                            UpdateSourceTrigger=PropertyChanged
+                                        }"
+                                        Style="{StaticResource CheckItemText}"
+                                        Text="{Binding Path=Description}"
+                                    />
+                                    <TextBlock
+                                        Grid.Column="5"
+                                        Margin="10,0,0,0"
+                                        FontSize="{Binding
+                                            ElementName=ChecklistDataView,
+                                            Path=FontSize,
+                                            UpdateSourceTrigger=PropertyChanged
+                                        }"
+                                        Style="{StaticResource CheckItemText}"
+                                        Text="{Binding Path=ExtraInfo}"
+                                    />
                                 </Grid>
                             </Border>
                         </DataTemplate>

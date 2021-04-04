@@ -1,5 +1,6 @@
 ﻿using ChecklistApp.Events;
 using ChecklistApp.Models;
+using Microsoft.Win32;
 using MVVMLibrary;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,15 @@ namespace ChecklistApp.ViewModels
    {
       #region - Fields & Properties
       public static event EventHandler SaveAllEvent;
+      public static readonly List<FileDialogCustomPlace> CustomChecklistPlaces = new()
+      {
+         new(@"D:\FlightSimData\CustomChecklists")
+      };
+      public static readonly List<FileDialogCustomPlace> CustomChartPlaces = new()
+      {
+         new(@"D:\FlightSimData\PMDG-FlightManuals\Charts"),
+         new(@"D:\FlightSimData\PMDG-FlightManuals")
+      };
 
       public Command SaveAllCmd { get; init; }
       #endregion

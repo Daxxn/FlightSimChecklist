@@ -12,7 +12,7 @@ namespace ChecklistApp.Models
    {
       #region - Fields & Properties
       private string _name;
-      private ObservableCollection<string> _tags;
+      private ObservableCollection<Tag> _tags;
       private ObservableCollection<CheckItem> _items = new();
       #endregion
 
@@ -45,7 +45,7 @@ namespace ChecklistApp.Models
          }
       }
 
-      public ObservableCollection<string> Tags
+      public ObservableCollection<Tag> Tags
       {
          get { return _tags; }
          set

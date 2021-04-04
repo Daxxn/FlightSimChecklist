@@ -43,7 +43,7 @@ namespace ChecklistApp.Views
             {
                if (checklist.Tags is null) checklist.Tags = new();
 
-               checklist.Tags.Add("NewTag");
+               checklist.Tags.Add(new() { Value = "NewTag" });
                VM.UpdateTags();
             }
          }
@@ -83,17 +83,11 @@ namespace ChecklistApp.Views
 
       private void TagTextBox_TextChanged(object sender, TextChangedEventArgs e)
       {
-         if (e.Changes.Count > 0) VM.UpdateTags();
-      }
+         if (e.Changes.Count == 0) return;
 
-      private void Delete_KeyDown(object sender, KeyEventArgs e)
-      {
-         if (e.Key == Key.Delete)
+         if (sender is TextBox box)
          {
-            if (sender is TextBox box)
-            {
-
-            }
+            VM.UpdateTag(box.DataContext as Tag);
          }
       }
 
@@ -101,7 +95,15 @@ namespace ChecklistApp.Views
       {
          if (sender is MenuItem menu)
          {
-            VM.DeleteTag(menu.DataContext as string);
+            VM.DeleteTag(menu.DataContext as Tag);
+         }
+      }
+
+      private void FontSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+      {
+         if (ChecklistDataView is not null)
+         {
+            ChecklistDataView.FontSize = (int)e.NewValue;
          }
       }
    }

@@ -49,14 +49,14 @@ namespace ChecklistApp.ViewModels
          }
       }
 
-      public List<string> AllTags
+      public List<Tag> AllTags
       {
          get
          {
             if (CurrentAircraft is null) return null;
             if (!CurrentAircraft.Checklists.Any()) return null;
 
-            List<string> output = new();
+            List<Tag> output = new();
             foreach (var cl in CurrentAircraft.Checklists)
             {
                if (cl.Tags != null)

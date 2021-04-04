@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChecklistApp.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +23,20 @@ namespace ChecklistApp.Views
    {
       public ChartView()
       {
+         DataContext = new ChartViewModel();
          InitializeComponent();
+      }
+
+      private void ListView_ScrollChanged(object sender, ScrollChangedEventArgs e)
+      {
+         ChartScrollBar.ScrollToVerticalOffset(ChartScrollBar.VerticalOffset + e.VerticalChange);
+         e.Handled = true;
+      }
+
+      private void Border_MouseWheel(object sender, MouseWheelEventArgs e)
+      {
+         ChartScrollBar.ScrollToVerticalOffset(ChartScrollBar.VerticalOffset + -e.Delta);
+         e.Handled = true;
       }
    }
 }

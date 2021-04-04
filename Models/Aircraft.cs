@@ -106,11 +106,11 @@ namespace ChecklistApp.Models
          }
       }
 
-      public ObservableCollection<string> AllTags
+      public ObservableCollection<Tag> AllTags
       {
          get
          {
-            ObservableCollection<string> output = new();
+            ObservableCollection<Tag> output = new();
             foreach (var cl in Checklists)
             {
                foreach (var tag in cl.Tags)

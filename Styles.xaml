@@ -96,6 +96,7 @@
         <Setter Property="MinWidth" Value="100"/>
     </Style>
     <Style TargetType="TextBox" x:Key="CheckItemBox">
+        <Setter Property="AcceptsReturn" Value="True"/>
         <Setter Property="Foreground" Value="{StaticResource MainText}"/>
         <Setter Property="Background" Value="{StaticResource ChecklistItemBG}"/>
         <Setter Property="Padding" Value="4"/>

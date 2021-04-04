@@ -15,6 +15,7 @@ namespace ChecklistApp.Models
       private string _filePath;
       private string _title;
       private ObservableCollection<string> _tags;
+      private double _width;
       #endregion
 
       #region - Constructors
@@ -60,6 +61,16 @@ namespace ChecklistApp.Models
          set
          {
             _tags = value;
+            OnPropertyChanged();
+         }
+      }
+
+      public double Width
+      {
+         get { return _width; }
+         set
+         {
+            _width = value;
             OnPropertyChanged();
          }
       }

@@ -19,6 +19,7 @@ namespace ChecklistApp.ViewModels
       private Aircraft _currentAircraft;
       private Checklist _selectedChecklist;
       private CheckItem _selectedItem;
+      private int _fontSize = 18;
 
       public Command NewChecklistCmd { get; init; }
       public Command NewCheckItemCmd { get; init; }
@@ -81,9 +82,27 @@ namespace ChecklistApp.ViewModels
          UpdateTagsEvent?.Invoke(this, new(CurrentAircraft));
       }
 
-      public void DeleteTag(string tag)
+      public void UpdateTag(Tag tag)
       {
-         SelectedChecklist.Tags.Remove(tag);
+         if (tag is not null)
+         {
+            var checklist = CurrentAircraft.Checklists.First(ch => ch.Tags.Contains(tag));
+            if (checklist is not null)
+            {
+               var foundTag = checklist.Tags.First(t => t == tag);
+               foundTag = tag;
+               UpdateTags();
+            }
+         }
+      }
+
+      public void DeleteTag(Tag tag)
+      {
+         var checklist = CurrentAircraft.Checklists.First(ch => ch.Tags.Contains(tag));
+         if (checklist is not null)
+         {
+            checklist.Tags.Remove(tag);
+         }
       }
 
       public void DeleteChecklist()
@@ -131,6 +150,16 @@ namespace ChecklistApp.ViewModels
          set
          {
             _selectedItem = value;
+            OnPropertyChanged();
+         }
+      }
+
+      public int FontSize
+      {
+         get { return _fontSize; }
+         set
+         {
+            _fontSize = value;
             OnPropertyChanged();
          }
       }

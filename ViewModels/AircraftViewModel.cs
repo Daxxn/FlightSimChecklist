@@ -23,10 +23,6 @@ namespace ChecklistApp.ViewModels
       private string _aircraftDataSavePath;
       private ObservableCollection<Aircraft> _aircraftData;
       private Aircraft _selectedAircraft;
-      private readonly List<FileDialogCustomPlace> CustomPlaces = new()
-      {
-         new FileDialogCustomPlace(@"D:\FlightSimData\CustomChecklists")
-      };
 
       private bool _keepChecklistsCompleted = true;
 
@@ -261,6 +257,8 @@ namespace ChecklistApp.ViewModels
             data.SaveAircraft(AircraftData);
             data.ChecklistDir = ChecklistDir;
             JsonReader.SaveJsonFile(AircraftDataSavePath, data, true);
+
+            MessageBox.Show("Data saved.", "Saved");
          }
          catch (Exception e)
          {
@@ -272,7 +270,7 @@ namespace ChecklistApp.ViewModels
       {
          SaveFileDialog dialog = new()
          {
-            CustomPlaces = CustomPlaces,
+            CustomPlaces = MainViewModel.CustomChecklistPlaces,
             Title = "Save Aircraft Data File",
             DefaultExt = ".ard",
             AddExtension = true,

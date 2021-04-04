@@ -29,11 +29,14 @@
             <TabItem Header="Aircraft" IsSelected="True">
                 <views:AircraftView/>
             </TabItem>
-            <TabItem Header="Tag Manager">
-                <views:TagManagerView/>
+            <TabItem Header="Charts">
+                <views:ChartView/>
             </TabItem>
             <TabItem Header="Scratch Pad">
                 <views:ScratchpadView/>
+            </TabItem>
+            <TabItem Header="Tag Manager">
+                <views:TagManagerView/>
             </TabItem>
         </TabControl>
     </Grid>
